@@ -1,0 +1,214 @@
+/* THE SYSTEM -- the recovered machine around everything: masthead, panels,
+   readouts. Hairlines and type do the work; no glow, no gradients. */
+
+.shell { min-height: 100dvh; display: flex; flex-direction: column; }
+.shell__main { flex: 1; width: 100%; max-width: var(--page); margin: 0 auto; padding: var(--s5) var(--gutter) var(--s8); }
+
+/* ---------- masthead ---------- */
+
+.masthead {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-bottom: var(--rule);
+  background: rgb(11 11 10 / 0.92);
+  backdrop-filter: blur(6px);
+}
+
+.masthead__inner {
+  display: flex;
+  align-items: center;
+  gap: var(--s4);
+  max-width: var(--page);
+  margin: 0 auto;
+  padding: var(--s3) var(--gutter);
+}
+
+.masthead__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  margin-right: auto;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.masthead__brand .seal { width: 1.75rem; height: 1.75rem; color: var(--signal); }
+.masthead__name { font-family: var(--font-dema); font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; line-height: 1.2; }
+.masthead__node { display: block; font-family: var(--font-mono); font-size: 0.625rem; letter-spacing: 0.16em; color: var(--text-faint); }
+
+.masthead__menu { display: none; }
+
+.nav { display: flex; align-items: center; gap: var(--s1); }
+
+.nav__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.5rem;
+  padding: 0 var(--s3);
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--track-caps);
+  text-transform: uppercase;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+.nav__link:hover { color: var(--text); }
+.nav__link[aria-current="page"] { color: var(--text); border-bottom-color: var(--accent); }
+
+.masthead__who {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  padding-left: var(--s4);
+  border-left: var(--rule);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-faint);
+}
+
+.masthead__who b { color: var(--text); font-weight: 500; letter-spacing: 0.04em; }
+
+@media (max-width: 52rem) {
+  .masthead__inner { flex-wrap: wrap; }
+  .masthead__menu { display: inline-flex; }
+  .masthead__drawer { flex-basis: 100%; display: none; flex-direction: column; align-items: stretch; gap: var(--s3); padding-top: var(--s3); border-top: var(--rule); }
+  .masthead__drawer[data-open="true"] { display: flex; }
+  .nav { flex-direction: column; align-items: stretch; }
+  .nav__link { min-height: 2.75rem; border-bottom: var(--rule); }
+  .nav__link[aria-current="page"] { border-bottom-color: var(--accent); }
+  .masthead__who { padding: var(--s2) 0 0; border-left: 0; justify-content: space-between; }
+}
+
+@media (min-width: 52.01rem) {
+  .masthead__drawer { display: flex; align-items: center; gap: var(--s4); }
+}
+
+/* ---------- footer ---------- */
+
+.colophon {
+  border-top: var(--rule);
+  padding: var(--s4) var(--gutter) calc(var(--s4) + env(safe-area-inset-bottom));
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.06em;
+  color: var(--text-faint);
+}
+
+.colophon__inner { display: flex; flex-wrap: wrap; gap: var(--s2) var(--s5); justify-content: space-between; max-width: var(--page); margin: 0 auto; }
+.colophon a { color: var(--text-dim); }
+
+/* ---------- page heading ---------- */
+
+.page-head { padding: var(--s5) 0 var(--s6); border-bottom: var(--rule); margin-bottom: var(--s6); }
+.page-head__title { margin-top: var(--s2); font-family: var(--font-dema); font-size: var(--text-2xl); letter-spacing: 0.05em; text-transform: uppercase; line-height: 1.05; }
+.page-head__lede { margin-top: var(--s4); max-width: var(--measure); color: var(--text-dim); }
+
+/* ---------- panels ---------- */
+
+.panel { border: var(--rule); background: var(--surface); }
+
+.panel__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s3);
+  padding: var(--s3) var(--s4);
+  border-bottom: var(--rule);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--track-caps);
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.panel__head h2 { font-size: inherit; letter-spacing: inherit; }
+.panel__body { padding: var(--s4); }
+.panel__body > * + * { margin-top: var(--s3); }
+
+/* ---------- status readout: a row of system lights ---------- */
+
+.status { list-style: none; margin: 0; padding: 0; }
+
+.status__row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--s1) var(--s4);
+  align-items: center;
+  padding: var(--s3) var(--s4);
+  border-bottom: var(--rule);
+}
+
+.status__row:last-child { border-bottom: 0; }
+
+.status__name { font-family: var(--font-mono); font-size: var(--text-sm); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); }
+a.status__name { text-decoration: none; }
+a.status__name:hover { color: var(--accent); }
+.status__note { grid-column: 1 / -1; font-size: var(--text-sm); color: var(--text-faint); }
+
+.status__light {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: var(--track-caps);
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.status__light::before { content: ""; width: 0.5rem; height: 0.5rem; border: 1px solid currentColor; }
+.status__light--online { color: var(--olive); }
+.status__light--online::before { background: currentColor; }
+.status__light--warn { color: var(--signal); }
+.status__light--warn::before { background: currentColor; }
+
+/* ---------- terminal: transcripts of recovered transmissions ---------- */
+
+.terminal {
+  margin: 0;
+  padding: var(--s4);
+  background: #070706;
+  border: var(--rule);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.75;
+  color: var(--text-dim);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.terminal b { color: var(--text); font-weight: 500; }
+.terminal .sig { color: var(--signal); }
+.terminal .lost { color: var(--text-faint); }
+
+/* ---------- loading and empty states ---------- */
+
+.linking {
+  display: grid;
+  place-items: center;
+  min-height: 60dvh;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--track-wide);
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.linking span::after { content: "_"; animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .linking span::after { animation: none; } }
+
+/* a centred sheet on the bare machine: sign in, intake, denial */
+.desk {
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: var(--s6) var(--gutter);
+}
+
+.desk__sheet { width: 100%; max-width: 28rem; }
+.desk__below { margin-top: var(--s4); text-align: center; font-size: var(--text-sm); color: var(--text-faint); }
+.desk__below a { color: var(--text-dim); }

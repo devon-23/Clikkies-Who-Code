@@ -1,0 +1,55 @@
+{
+  "name": "clikkies-who-code",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "An unofficial, fan-made Twenty One Pilots-inspired investigation and coding playground.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite build && vite preview",
+    "typecheck": "tsc -b --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check": "npm run typecheck && npm run test",
+    "cf-typegen": "wrangler types --strict-vars=false src/worker/worker-configuration.d.ts",
+    "deploy:staging": "CLOUDFLARE_ENV=staging vite build --mode staging && wrangler deploy",
+    "deploy:production": "CLOUDFLARE_ENV=production vite build --mode production && wrangler deploy",
+    "db:push": "npx supabase@2 db push",
+    "db:new": "npx supabase@2 migration new"
+  },
+  "dependencies": {
+    "@fontsource/ibm-plex-mono": "5.3.0",
+    "@fontsource/ibm-plex-sans": "5.3.0",
+    "@fontsource/michroma": "5.3.0",
+    "@hono/zod-validator": "0.9.1",
+    "@supabase/supabase-js": "2.117.3",
+    "drizzle-orm": "0.45.4",
+    "hono": "4.13.13",
+    "jose": "6.2.12",
+    "postgres": "3.4.9",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-router": "7.18.4",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "1.63.2",
+    "@electric-sql/pglite": "0.5.9",
+    "@types/node": "26.6.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.1.2",
+    "typescript": "7.0.2",
+    "vite": "8.3.4",
+    "vitest": "5.0.4",
+    "wrangler": "4.150.0"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "allowScripts": {
+    "workerd@1.20261006.1": true,
+    "esbuild@0.28.2": true
+  }
+}

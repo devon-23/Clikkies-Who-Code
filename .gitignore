@@ -1,0 +1,22 @@
+node_modules/
+dist/
+.wrangler/
+.tmp/
+*.tsbuildinfo
+
+# secrets -- only the .example versions are committed
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+.env
+.env.*
+!.env.example
+
+# supabase CLI local state
+supabase/.temp/
+supabase/.branches/
+
+# database exports hold players' data
+backups/
+
+.DS_Store

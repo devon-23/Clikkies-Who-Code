@@ -1,0 +1,47 @@
+// Cloudflare Worker config. One Worker serves the built React app as static
+// assets and answers /api/* itself.
+//
+// The top level is LOCAL DEVELOPMENT. Deployed environments live under "env"
+// and are picked at build time: CLOUDFLARE_ENV=production vite build.
+// Locally the API reaches Postgres through DATABASE_URL in .dev.vars; deployed,
+// it goes through Hyperdrive, which pools connections close to the database.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "clikkies-who-code",
+  "main": "src/worker/index.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
+  },
+  "observability": { "enabled": true },
+  "vars": {
+    "APP_ENV": "development",
+    // Your dev Supabase project's URL. Not a secret -- it is also in the
+    // browser bundle. Copy it from .dev.vars.example if you prefer.
+    "SUPABASE_URL": ""
+  },
+  "env": {
+    "staging": {
+      "name": "clikkies-who-code-staging",
+      "vars": {
+        "APP_ENV": "staging",
+        "SUPABASE_URL": "REPLACE_WITH_STAGING_SUPABASE_URL"
+      },
+      "hyperdrive": [
+        { "binding": "HYPERDRIVE", "id": "REPLACE_WITH_STAGING_HYPERDRIVE_ID" }
+      ]
+    },
+    "production": {
+      "name": "clikkies-who-code",
+      "vars": {
+        "APP_ENV": "production",
+        "SUPABASE_URL": "REPLACE_WITH_PRODUCTION_SUPABASE_URL"
+      },
+      "hyperdrive": [
+        { "binding": "HYPERDRIVE", "id": "REPLACE_WITH_PRODUCTION_HYPERDRIVE_ID" }
+      ]
+    }
+  }
+}

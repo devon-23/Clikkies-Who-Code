@@ -1,0 +1,103 @@
+/* CLIKKIES WHO CODE -- design tokens
+
+   Two materials, borrowed from the FPE archive and turned inside out:
+
+   THE SYSTEM  -- a recovered machine. Near-black, bone text, hairline rules.
+                  Everything the player navigates.
+   THE PAPER   -- documents Dema issued. Off-white sheets in black and oxblood
+                  ink, pulled up inside the system like evidence on a desk.
+
+   One lore rule runs the palette: the Bishops cannot see yellow. So nothing
+   official is ever yellow. Yellow means the Banditos were here -- tape,
+   annotations, help. */
+
+:root {
+  /* ---------- the system ---------- */
+  --void:        #0b0b0a;
+  --surface:     #131311;
+  --surface-2:   #1b1b18;
+  --line:        #2c2c28;
+  --line-strong: #4a4943;
+  --text:        #dcd8cd;   /* bone, after the FROM HERE merch */
+  --text-dim:    #aaa69a;
+  --text-faint:  #8c887d;   /* 5.4:1 on --void; the floor for small text */
+
+  /* red that can be read on black. the oxblood below is for paper only */
+  --signal:      #d24a36;
+
+  /* ---------- the paper ---------- */
+  --paper:       #ecebe5;
+  --paper-edge:  #d6d4cb;
+  --ink:         #111110;
+  --ink-dim:     #3f3e3a;
+  --ink-faint:   #66655e;   /* 5.0:1 on --paper */
+  --oxblood:     #a3281f;   /* the FPE letterhead red */
+
+  /* ---------- the colour Dema cannot see ---------- */
+  --tape:        #ffd800;
+  --tape-ink:    #111110;
+  --olive:       #909461;
+
+  /* the campaign accent. each era redefines these -- see [data-era] below */
+  --accent:      var(--signal);
+  --accent-ink:  var(--void);
+
+  /* ---------- type ----------
+     Michroma stands in for the engraved gothic the FPE letterhead is set in.
+     It is open-licensed, so it can ship; if a licence for the original ever
+     turns up, swap it here and nowhere else. */
+  --font-dema:    "Michroma", "Banknote Gothic", Copperplate, "Copperplate Gothic Light", sans-serif;
+  --font-body:    "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono:    "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+
+  --text-xs:   0.6875rem;  /* 11px -- tracked caps labels. never smaller */
+  --text-sm:   0.8125rem;
+  --text-md:   1rem;
+  --text-lg:   1.25rem;
+  --text-xl:   1.75rem;
+  --text-2xl:  clamp(2rem, 6vw, 3.25rem);
+  --text-hero: clamp(2.25rem, 9vw, 5.5rem);
+
+  --track-caps: 0.18em;
+  --track-wide: 0.28em;
+
+  /* ---------- space ---------- */
+  --s1: 0.25rem;
+  --s2: 0.5rem;
+  --s3: 0.75rem;
+  --s4: 1rem;
+  --s5: 1.5rem;
+  --s6: 2rem;
+  --s7: 3rem;
+  --s8: 4.5rem;
+
+  --gutter: clamp(1rem, 4vw, 2.5rem);
+  --measure: 38rem;          /* comfortable line length for reading */
+  --page: 72rem;
+
+  /* ---------- edges ---------- */
+  --rule: 1px solid var(--line);
+  --rule-strong: 1px solid var(--line-strong);
+  --radius: 0;               /* nothing in Dema has rounded corners */
+  --shadow-sheet: 0 1px 0 var(--paper-edge), 0 18px 40px -18px rgb(0 0 0 / 0.8);
+
+  /* ---------- motion ---------- */
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --dur-fast: 120ms;
+  --dur: 240ms;
+  --dur-slow: 600ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur-fast: 0ms; --dur: 0ms; --dur-slow: 0ms; }
+}
+
+/* ---------- campaign identities ----------
+   Navigation and controls never change between eras. Only the accent, and
+   the odd background note, does. */
+
+[data-era="blurryface"]     { --accent: var(--signal); --accent-ink: var(--void); --era-note: #1a1110; }
+[data-era="trench"]         { --accent: var(--tape);   --accent-ink: var(--tape-ink); --era-note: #15160f; }
+[data-era="scaled-and-icy"] { --accent: #f2a9c4;       --accent-ink: #1a1018; --era-note: #121519; --era-2: #8fd6e6; }
+[data-era="clancy"]         { --accent: #e0351f;       --accent-ink: #fff4d0; --era-note: #1a0f0b; --era-2: var(--tape); }
+[data-era="breach"]         { --accent: #c1121f;       --accent-ink: #0b0b0a; --era-note: #0f0707; }

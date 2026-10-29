@@ -1,0 +1,19 @@
+# Response headers Cloudflare adds to every static file it serves (the app
+# itself). /api/* responses set their own headers in src/worker/app.ts.
+#
+# Content-Security-Policy, line by line:
+#   scripts, fonts, styles  only from this site -- nothing third-party loads
+#   style-src-attr          React's style={{...}} props need inline attributes
+#   img-src data:           the film-grain texture is an inline SVG
+#   connect-src supabase    the browser talks to Supabase Auth to sign in
+#   frame-ancestors none    nobody can embed this site to trick clicks
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://*.supabase.co; frame-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Content-Type-Options: nosniff
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+  Cross-Origin-Opener-Policy: same-origin
+  X-Robots-Tag: noindex, nofollow
+
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable

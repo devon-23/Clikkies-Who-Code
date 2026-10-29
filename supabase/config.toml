@@ -1,0 +1,4 @@
+# Supabase CLI project marker. Only used for `supabase link` and
+# `supabase db push` against hosted projects -- this project does not run the
+# local Docker stack. See docs/setup.md.
+project_id = "clikkies-who-code"

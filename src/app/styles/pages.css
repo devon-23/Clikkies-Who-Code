@@ -1,0 +1,220 @@
+/* page-specific layout. shared pieces live in document.css and system.css */
+
+/* ---------- the transmission ---------- */
+
+.tx { min-height: 100dvh; display: flex; flex-direction: column; }
+
+.tx__main {
+  flex: 1;
+  width: 100%;
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: clamp(var(--s6), 10vh, var(--s8)) var(--gutter) var(--s7);
+  container-type: inline-size;
+}
+
+.tx__brand { margin-bottom: var(--s6); }
+
+/* Michroma is very wide: TRANSMISSION has to fit the column, so the size
+   comes from the column's width rather than the viewport's */
+.tx__title {
+  font-family: var(--font-dema);
+  font-size: min(4.5rem, 7.4cqi);
+  line-height: 0.98;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.tx__meta {
+  display: grid;
+  gap: var(--s1);
+  margin: var(--s6) 0 var(--s6);
+  padding: var(--s3) 0;
+  border-top: var(--rule);
+  border-bottom: var(--rule);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--track-caps);
+  text-transform: uppercase;
+}
+
+.tx__meta div { display: grid; grid-template-columns: 7rem 1fr; gap: var(--s3); }
+.tx__meta dt { color: var(--text-faint); }
+.tx__meta dd { margin: 0; color: var(--text-dim); }
+
+.tx__lines {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--s4);
+  font-family: var(--font-mono);
+  font-size: clamp(1rem, 2.4vw, 1.1875rem);
+  line-height: 1.65;
+  color: var(--text);
+}
+
+.tx__line::before { content: "> "; color: var(--signal); }
+.tx__lost { color: var(--text-faint); font-size: var(--text-sm); letter-spacing: var(--track-caps); text-transform: uppercase; }
+.tx__lost::before { content: ""; }
+
+.tx__actions { display: flex; flex-wrap: wrap; gap: var(--s3); margin-top: var(--s7); }
+
+.tx__skip { margin-top: var(--s5); font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.08em; color: var(--text-faint); }
+.tx__note { margin-top: var(--s5); color: var(--text-dim); }
+
+/* each line arrives on its own, like a signal coming through. a slow
+   fade, nothing that flashes; reduced motion shows it all at once */
+@media (prefers-reduced-motion: no-preference) {
+  .tx:not([data-reveal="all"]) .tx__line,
+  .tx:not([data-reveal="all"]) .tx__actions {
+    animation: tx-arrive 900ms var(--ease) both;
+    animation-delay: calc(0.6s + var(--i, 0) * 1.5s);
+  }
+}
+
+@keyframes tx-arrive {
+  from { opacity: 0; transform: translateY(0.35rem); filter: blur(2px); }
+  to   { opacity: 1; transform: none; filter: none; }
+}
+
+/* ---------- forms on paper ---------- */
+
+.toggle { display: grid; grid-template-columns: 1fr 1fr; margin-bottom: var(--s5); border: 1px solid var(--ink); }
+
+.toggle button {
+  min-height: 2.75rem;
+  border: 0;
+  background: transparent;
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--track-caps);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.toggle button + button { border-left: 1px solid var(--ink); }
+.toggle button[aria-pressed="true"] { background: var(--ink); color: var(--paper); font-weight: 500; }
+
+.form { display: grid; gap: var(--s5); }
+.form__row { display: block; }
+.form__note { font-size: var(--text-sm); color: var(--ink-dim); }
+.form__hint { display: block; margin-top: var(--s1); font-size: 0.75rem; color: var(--ink-faint); }
+.form__aside { margin-top: var(--s4); text-align: center; font-size: 0.75rem; color: var(--ink-faint); }
+.faint-ink { color: var(--ink-dim); }
+
+/* ---------- the hub ---------- */
+
+.hub { display: grid; gap: var(--s6); align-items: start; }
+
+@media (min-width: 56rem) {
+  .hub { grid-template-columns: minmax(19rem, 25rem) 1fr; }
+  .hub__record { position: sticky; top: 5.5rem; }
+}
+
+.hub__side { display: grid; gap: var(--s5); }
+
+.hub__handle {
+  display: grid;
+  gap: var(--s1);
+  margin-top: var(--s4);
+  padding: var(--s3) var(--s4);
+  border: 1px dashed var(--line-strong);
+  font-size: var(--text-sm);
+}
+
+.hub__handle b { font-family: var(--font-mono); font-weight: 500; font-size: var(--text-md); color: var(--text); }
+
+/* ---------- campaign directory ---------- */
+
+.eras { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s4); }
+
+.era {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: var(--s5);
+  padding: var(--s5);
+  border: var(--rule);
+  border-left: 3px solid var(--accent);
+  background: linear-gradient(90deg, var(--era-note, var(--surface)), var(--surface) 55%);
+}
+
+.era__index { font-family: var(--font-dema); font-size: var(--text-xl); line-height: 1; color: var(--accent); }
+.era__title { margin-top: var(--s2); font-family: var(--font-dema); font-size: var(--text-xl); letter-spacing: 0.04em; text-transform: uppercase; }
+.era__tagline { margin-top: var(--s1); font-family: var(--font-mono); font-size: var(--text-sm); letter-spacing: 0.06em; color: var(--accent); }
+.era__teaser { margin-top: var(--s3); max-width: var(--measure); color: var(--text-dim); }
+.era .restricted { margin-top: var(--s4); max-width: 30rem; }
+
+.era__plan { margin-top: var(--s4); font-size: var(--text-sm); color: var(--text-faint); }
+.era__plan summary { cursor: pointer; font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: var(--track-caps); text-transform: uppercase; }
+.era__plan p { margin-top: var(--s2); max-width: var(--measure); }
+
+.era--sealed .era__title,
+.era--sealed .era__teaser { color: var(--text-faint); }
+
+/* scaled and icy is cheerful on purpose. it should feel slightly wrong */
+.era[data-era="scaled-and-icy"] .era__tagline { color: var(--era-2); }
+.era[data-era="breach"] .era__teaser { letter-spacing: 0.04em; }
+
+@media (max-width: 40rem) {
+  .era { grid-template-columns: 1fr; gap: var(--s3); }
+  .era__status { order: -1; }
+}
+
+/* ---------- admin ---------- */
+
+.admin { display: grid; gap: var(--s5); }
+.admin__notice { margin-bottom: var(--s5); }
+
+@media (min-width: 56rem) {
+  .admin { grid-template-columns: 1fr 1fr; }
+  .admin__wide { grid-column: 1 / -1; }
+}
+
+.tally { display: grid; grid-template-columns: repeat(5, 1fr); margin: 0; }
+.tally div { padding: var(--s4) var(--s2); text-align: center; border-right: var(--rule); }
+.tally div:last-child { border-right: 0; }
+.tally dt { font-family: var(--font-mono); font-size: 0.625rem; letter-spacing: var(--track-caps); text-transform: uppercase; color: var(--text-faint); }
+.tally dd { margin: var(--s1) 0 0; font-family: var(--font-dema); font-size: var(--text-xl); color: var(--text); }
+
+.invite { display: grid; gap: var(--s3); align-items: end; }
+@media (min-width: 40rem) { .invite { grid-template-columns: 1.4fr 1fr auto; } }
+.invite__hint { grid-column: 1 / -1; margin: 0; }
+
+.roster { list-style: none; margin: 0; padding: 0; border-top: var(--rule); }
+.roster__row { display: grid; grid-template-columns: 1fr auto auto; gap: var(--s3); align-items: center; padding: var(--s3) var(--s4); border-bottom: var(--rule); }
+.roster__row:last-child { border-bottom: 0; }
+.roster__who { display: grid; min-width: 0; font-size: var(--text-sm); }
+.roster__who .mono { overflow-wrap: anywhere; }
+
+@media (max-width: 30rem) {
+  .roster__row { grid-template-columns: 1fr auto; }
+  .roster__row .button { grid-column: 1 / -1; }
+}
+
+.log { list-style: none; margin: 0; padding: 0; font-family: var(--font-mono); font-size: var(--text-xs); }
+.log li { display: grid; grid-template-columns: 11rem 10rem 1fr auto; gap: var(--s3); padding: var(--s2) var(--s4); border-bottom: var(--rule); }
+.log li:last-child { border-bottom: 0; }
+.log time { color: var(--text-faint); }
+
+@media (max-width: 44rem) {
+  .log li { grid-template-columns: 1fr auto; }
+}
+
+/* ---------- support ---------- */
+
+.support { max-width: 44rem; padding-top: var(--s7); }
+.support__body { margin-top: var(--s5); }
+.support__lines { padding-left: var(--s5); color: var(--text); }
+.support__lines li + li { margin-top: var(--s2); }
+.support__back { margin-top: var(--s6); font-family: var(--font-mono); font-size: var(--text-sm); }
+
+/* ---------- 404 ---------- */
+
+.void { max-width: 34rem; margin: 0 auto; padding: 18vh var(--gutter) var(--s7); }
+.void__code { font-family: var(--font-dema); font-size: var(--text-xl); letter-spacing: 0.08em; text-transform: uppercase; color: var(--signal); }
+.void__body { margin-top: var(--s4); color: var(--text-dim); }
+.void__back { margin-top: var(--s6); font-family: var(--font-mono); font-size: var(--text-sm); }
