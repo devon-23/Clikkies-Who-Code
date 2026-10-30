@@ -12,7 +12,7 @@ export function RequireAccess() {
   const { session, me, meError, refreshMe } = useSession();
   const location = useLocation();
 
-  if (!authConfigured) return <Unconfigured />;
+  if (!authConfigured && !session) return <Unconfigured />;
   if (session === undefined || (session && me === undefined)) return <Linking />;
   if (!session) return <Navigate to="/enter" replace state={{ from: location.pathname }} />;
   if (!me) return <LinkFailed message={meError} onRetry={() => void refreshMe()} />;
@@ -24,7 +24,7 @@ export function RequireAccess() {
 // signed in, but not necessarily through intake yet: /intake and /denied
 export function RequireSession() {
   const { session } = useSession();
-  if (!authConfigured) return <Unconfigured />;
+  if (!authConfigured && !session) return <Unconfigured />;
   if (session === undefined) return <Linking />;
   if (!session) return <Navigate to="/enter" replace />;
   return <Outlet />;

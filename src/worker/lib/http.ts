@@ -6,12 +6,14 @@ import type { ApiErrorCode } from '../../shared/api.ts';
 // the client expects. Messages are written for players, so keep them plain
 // and never put anything secret in one.
 export class ApiError extends HTTPException {
-  constructor(
-    status: ContentfulStatusCode,
-    public readonly code: ApiErrorCode,
-    message: string,
-  ) {
+  readonly code: ApiErrorCode;
+  /** extra top-level fields for the body -- e.g. the newer copy in a save conflict */
+  readonly extra: Record<string, unknown>;
+
+  constructor(status: ContentfulStatusCode, code: ApiErrorCode, message: string, extra: Record<string, unknown> = {}) {
     super(status, { message });
+    this.code = code;
+    this.extra = extra;
   }
 }
 

@@ -12,6 +12,8 @@ import * as schema from '../../src/worker/db/schema.ts';
 import type { Db } from '../../src/worker/db/client.ts';
 import type { Bindings } from '../../src/worker/env.ts';
 import { verifierFor } from '../../src/worker/lib/tokens.ts';
+import { buildRegistry, type ContentInput, type Registry } from '../../src/worker/content/registry.ts';
+import { fixtureStory } from './fixture-story.ts';
 
 const ROOT = join(import.meta.dirname, '../..');
 const SUPABASE_URL = 'https://test-project.supabase.co';
@@ -19,6 +21,7 @@ const ISSUER = `${SUPABASE_URL}/auth/v1`;
 
 export interface Harness {
   pg: PGlite;
+  content: Registry;
   db: Db;
   request: (path: string, init?: RequestInit & { token?: string }) => Promise<Response>;
   signUp: (email: string) => Promise<{ id: string; token: string }>;
@@ -29,7 +32,9 @@ export interface Harness {
   player: (email: string, username: string, role?: 'player' | 'admin') => Promise<{ id: string; token: string }>;
 }
 
-export async function createHarness(opts: { databaseConfigured?: boolean } = {}): Promise<Harness> {
+export async function createHarness(
+  opts: { databaseConfigured?: boolean; content?: ContentInput } = {},
+): Promise<Harness> {
   const pg = new PGlite();
   await pg.exec(readFileSync(join(ROOT, 'tests/helpers/supabase-shim.sql'), 'utf8'));
   const dir = join(ROOT, 'supabase/migrations');
@@ -41,9 +46,11 @@ export async function createHarness(opts: { databaseConfigured?: boolean } = {})
   const { publicKey, privateKey } = await generateKeyPair('ES256');
   const jwks = createLocalJWKSet({ keys: [{ ...(await exportJWK(publicKey)), alg: 'ES256' }] });
 
+  const content = buildRegistry(opts.content ?? fixtureStory);
   const app = createApp({
     connect: () => (opts.databaseConfigured === false ? null : { db, close: async () => {} }),
     verifier: () => verifierFor(jwks, ISSUER),
+    content,
   });
 
   const env = { APP_ENV: 'test', SUPABASE_URL } as Bindings;
@@ -69,6 +76,7 @@ export async function createHarness(opts: { databaseConfigured?: boolean } = {})
 
   return {
     pg,
+    content,
     db,
     request,
     signUp,
@@ -79,7 +87,7 @@ export async function createHarness(opts: { databaseConfigured?: boolean } = {})
         -- cascade reaches app_settings too (updated_by -> auth.users), so the
         -- switch is put back rather than updated
         truncate public.profiles, public.tester_access, public.admin_audit_log,
-                 public.error_events, auth.users cascade;
+                 public.error_events, public.runs, public.notebook_entries, auth.users cascade;
         insert into public.app_settings (key, value) values ('public_registration', 'false')
           on conflict (key) do update set value = 'false', updated_by = null;
       `);

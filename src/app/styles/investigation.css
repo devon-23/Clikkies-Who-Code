@@ -1,0 +1,365 @@
+/* missions, the archive, the notebook, the personnel file, admin tabs.
+   Same two materials as everywhere: records on paper, the machine around them. */
+
+/* ---------- small shared pieces ---------- */
+
+.tag {
+  display: inline-block;
+  padding: 0 0.4em;
+  border: 1px solid var(--line-strong);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.evlist { display: grid; }
+
+.evlink {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: var(--s3);
+  align-items: baseline;
+  padding: var(--s3) var(--s4);
+  border-bottom: var(--rule);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.evlink:last-child { border-bottom: 0; }
+.evlink:hover { background: var(--surface-2); color: var(--text); }
+.evlink__file { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--accent); letter-spacing: 0.06em; }
+.evlink__title { font-size: var(--text-sm); }
+.evlink__kind { font-family: var(--font-mono); font-size: 0.625rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint); }
+
+.bar { grid-column: 1 / -1; display: block; height: 3px; background: var(--line); }
+.bar span { display: block; height: 100%; background: var(--accent); }
+
+.preview-badge {
+  position: fixed;
+  right: var(--s3);
+  bottom: var(--s3);
+  z-index: 300;
+  padding: var(--s1) var(--s3);
+  background: var(--tape);
+  color: var(--tape-ink);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-decoration: none;
+}
+
+/* ---------- hub assignment ---------- */
+
+.assignment__era { font-size: var(--text-xs); letter-spacing: var(--track-caps); color: var(--accent); }
+.assignment__title { font-family: var(--font-dema); font-size: var(--text-lg); letter-spacing: 0.04em; text-transform: uppercase; line-height: 1.25; }
+
+/* ---------- campaign mission list ---------- */
+
+.missions { list-style: none; margin: var(--s4) 0 0; padding: 0; border-top: var(--rule); max-width: 40rem; }
+
+.missions__row {
+  display: grid;
+  grid-template-columns: 2rem 1fr auto auto;
+  gap: var(--s3);
+  align-items: center;
+  padding: var(--s2) 0;
+  border-bottom: var(--rule);
+}
+
+.missions__n { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--text-faint); }
+.missions__title { font-size: var(--text-sm); color: var(--text); text-decoration: none; }
+a.missions__title:hover { color: var(--accent); }
+.missions__row--locked .missions__title { color: var(--line-strong); }
+.missions__tags { display: flex; gap: var(--s1); }
+
+@media (max-width: 34rem) {
+  .missions__row { grid-template-columns: 2rem 1fr auto; }
+  .missions__tags { grid-column: 2; grid-row: 2; }
+}
+
+/* ---------- a mission ---------- */
+
+.mission__head .kicker a { color: var(--accent); text-decoration: none; }
+.mission__closed { margin-top: var(--s4); display: flex; align-items: center; gap: var(--s3); color: var(--text-dim); font-size: var(--text-sm); }
+.mission__mobile { margin-bottom: var(--s5); }
+
+.mission__grid { display: grid; gap: var(--s6); align-items: start; }
+@media (min-width: 60rem) {
+  .mission__grid { grid-template-columns: 1fr 20rem; }
+  .mission__side { position: sticky; top: 5.5rem; }
+}
+
+.mission__main { display: grid; gap: var(--s5); min-width: 0; }
+.mission__side { display: grid; gap: var(--s4); }
+
+.mission__brief p { color: var(--text); font-size: 1.0625rem; line-height: 1.7; }
+.mission__brief p:first-child::first-letter { color: var(--accent); }
+
+.objectives { margin: 0; padding: var(--s3) var(--s4) var(--s3) calc(var(--s4) + 1.25em); font-size: var(--text-sm); color: var(--text-dim); }
+.objectives li + li { margin-top: var(--s2); }
+.objectives li::marker { font-family: var(--font-mono); color: var(--accent); }
+
+.findings__form { display: grid; gap: var(--s4); }
+.findings__form .button { justify-self: start; }
+/* the live region stays in the page (so it is announced) but takes no room empty */
+.findings__message:empty { margin-top: calc(-1 * var(--s4)); }
+
+.choices { margin: 0; padding: 0; border: 0; display: grid; gap: var(--s2); }
+.choice { display: flex; align-items: center; gap: var(--s3); min-height: 2.75rem; padding: var(--s2) var(--s3); border: var(--rule); cursor: pointer; }
+.choice:has(input:checked) { border-color: var(--accent); background: var(--surface-2); }
+.choice input { width: 1.125rem; height: 1.125rem; accent-color: var(--tape); }
+
+.hints__list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s4); }
+.hints__list p { margin-top: var(--s2); font-size: var(--text-sm); color: var(--text); }
+/* asking for help is a Bandito act: the button wears their colour */
+.hints__ask { border-color: var(--tape); color: var(--tape); }
+.hints__ask:hover { background: var(--tape); color: var(--tape-ink); border-color: var(--tape); }
+
+.external { list-style: none; margin: 0; display: grid; gap: var(--s3); font-size: var(--text-sm); }
+.external a { color: var(--text); }
+
+.mission__notes { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.06em; }
+.mission__notes a { color: var(--text-dim); }
+
+.mission__result { display: grid; gap: var(--s5); padding: var(--s5); border: 1px solid var(--accent); background: var(--surface); }
+.mission__success-text p { color: var(--text); font-size: 1.0625rem; }
+.mission__rewards .evlist { margin-top: var(--s2); border: var(--rule); }
+.mission__next { display: flex; flex-wrap: wrap; gap: var(--s3); }
+
+.commendations { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s2); font-size: var(--text-sm); }
+
+.mission-sealed { max-width: 28rem; margin: var(--s7) auto; }
+
+/* ---------- the archive ---------- */
+
+/* isolate, so the seal's z-index -1 stays behind the register, not the page */
+.archive { position: relative; isolation: isolate; overflow-x: clip; }
+
+/* the city seal, very large and very faint, behind the register: the archive
+   is the city's own memory, read against it */
+.archive__mark {
+  position: absolute;
+  top: -2rem;
+  right: -6rem;
+  width: min(34rem, 80vw);
+  pointer-events: none;
+  opacity: 0.06;
+  z-index: -1;
+}
+.archive__mark .seal { width: 100%; height: auto; color: var(--text); }
+
+.readout { display: flex; flex-wrap: wrap; gap: var(--s2) var(--s6); margin: 0 0 var(--s5); font-family: var(--font-mono); }
+.readout dt { font-size: 0.625rem; letter-spacing: var(--track-caps); text-transform: uppercase; color: var(--text-faint); }
+.readout dd { margin: 0; font-family: var(--font-dema); font-size: var(--text-xl); color: var(--text); }
+.readout dd span { font-size: var(--text-sm); color: var(--text-faint); }
+
+.archive__empty { padding: var(--s6) 0; color: var(--text-faint); }
+
+.register {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  border-top: var(--rule);
+  border-left: var(--rule);
+}
+
+.register__cell {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: var(--s1);
+  min-height: 7.5rem;
+  height: 100%;
+  padding: var(--s3);
+  border-right: var(--rule);
+  border-bottom: var(--rule);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.register__no { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.08em; color: var(--text-faint); }
+.register__title { font-size: var(--text-sm); line-height: 1.35; }
+.register__kind { margin-top: auto; font-family: var(--font-mono); font-size: 0.625rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint); }
+
+/* a found record is a sheet of paper in the drawer */
+.register__cell--found { background: var(--paper); color: var(--ink); box-shadow: inset 3px 0 0 var(--accent); }
+.register__cell--found .register__no { color: var(--oxblood); }
+.register__cell--found .register__kind { color: var(--ink-faint); }
+.register__cell--found:hover { color: var(--ink); background: #fff; }
+.register__cell--hidden { box-shadow: inset 3px 0 0 var(--tape); }
+.register__cell--hidden::after { content: "off book"; position: absolute; top: var(--s3); right: var(--s3); font-family: var(--font-mono); font-size: 0.5625rem; letter-spacing: 0.12em; text-transform: uppercase; background: var(--tape); color: var(--tape-ink); padding: 0 0.35em; }
+
+/* a gap: you can see the slot, not what goes in it */
+.register__cell--gap { background: repeating-linear-gradient(135deg, transparent 0 6px, rgb(255 255 255 / 0.02) 6px 7px); }
+.register__cell--gap .register__title { color: var(--line-strong); }
+
+.archive__terminal { margin-top: var(--s6); max-width: 44rem; }
+.archive__log { border: 0; max-height: 14rem; overflow-y: auto; }
+.archive__log a { text-decoration: none; }
+.archive__query { display: grid; grid-template-columns: auto 1fr auto; gap: var(--s2); align-items: center; padding: var(--s3) var(--s4); border-top: var(--rule); }
+.archive__prompt { font-family: var(--font-mono); color: var(--signal); }
+.archive__query .input { font-family: var(--font-mono); background: #070706; }
+
+/* ---------- a record ---------- */
+
+.record__back { margin-bottom: var(--s5); font-family: var(--font-mono); font-size: var(--text-sm); }
+.record__back a { color: var(--text-dim); text-decoration: none; }
+
+.record__grid { display: grid; gap: var(--s6); align-items: start; }
+/* grid items default to min-width: auto, so one long unbroken line would push
+   the column past the screen and the sheet would clip it */
+.record__grid > *, .evidence__body > *, .mission__grid > *, .notebook__grid > * { min-width: 0; }
+@media (min-width: 58rem) { .record__grid { grid-template-columns: minmax(0, 40rem) 1fr; } }
+.record__side { display: grid; gap: var(--s4); }
+
+.evidence { padding-top: var(--s5); }
+.evidence__head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: var(--s4); }
+.evidence__file { font-family: var(--font-mono); font-size: var(--text-sm); color: var(--oxblood); letter-spacing: 0.08em; }
+.evidence__class { font-family: var(--font-dema); font-size: 0.625rem; letter-spacing: 0.2em; text-transform: uppercase; padding: 0.15rem 0.5rem; border: 1px solid currentColor; }
+.evidence__class--classified { color: var(--oxblood); border-width: 2px; }
+.evidence__title { text-align: left; }
+.evidence__meta { margin-top: var(--s4); font-size: 0.8125rem; }
+.evidence__body { display: grid; gap: var(--s3); font-family: var(--font-body); font-size: 0.9375rem; line-height: 1.75; overflow-wrap: anywhere; }
+.evidence__h { font-family: var(--font-mono); font-size: var(--text-sm); letter-spacing: 0.1em; text-transform: uppercase; }
+.evidence__pre { margin: 0; padding: var(--s3); background: rgb(17 17 16 / 0.05); font-family: var(--font-mono); font-size: var(--text-sm); white-space: pre-wrap; }
+.evidence__quote { margin: 0; padding-left: var(--s4); border-left: 2px solid var(--oxblood); font-style: italic; }
+.evidence__quote footer { margin-top: var(--s1); font-style: normal; font-size: var(--text-sm); color: var(--ink-faint); }
+.evidence .doc__stamp { top: 3.5rem; color: var(--ink); }
+
+.xref { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s2); font-size: var(--text-sm); }
+.xref a { color: var(--text); text-decoration: none; }
+.xref .mono { color: var(--accent); }
+
+/* ---------- the notebook ---------- */
+
+.notebook__head .tape { margin-right: var(--s2); }
+.notebook__link { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s3); margin-bottom: var(--s5); }
+
+.notebook__grid { display: grid; gap: var(--s5); align-items: start; }
+@media (min-width: 52rem) { .notebook__grid { grid-template-columns: 17rem 1fr; } }
+
+.notebook__list { display: grid; gap: var(--s3); }
+.notebook__list ul { list-style: none; margin: 0; padding: 0; border-top: var(--rule); }
+.notebook__none { padding: var(--s3) 0; }
+
+.notebook__item {
+  display: grid;
+  gap: 0.15rem;
+  width: 100%;
+  padding: var(--s3);
+  border: 0;
+  border-bottom: var(--rule);
+  background: none;
+  color: var(--text-dim);
+  text-align: left;
+  cursor: pointer;
+}
+
+.notebook__item:hover { background: var(--surface); color: var(--text); }
+.notebook__item[aria-current="true"] { background: var(--surface-2); color: var(--text); box-shadow: inset 2px 0 0 var(--tape); }
+.notebook__item-title { font-size: var(--text-sm); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.notebook__item-meta { font-family: var(--font-mono); font-size: 0.625rem; letter-spacing: 0.08em; color: var(--text-faint); }
+
+.notebook__blank { padding: var(--s7) 0; text-align: center; border: 1px dashed var(--line); }
+
+/* on a phone, the list and the open entry take turns */
+@media (max-width: 52rem) {
+  .notebook[data-editing="true"] .notebook__list,
+  .notebook[data-editing="true"] .notebook__head .page-head__lede { display: none; }
+  .notebook:not([data-editing="true"]) .notebook__editor { display: none; }
+}
+@media (min-width: 52.01rem) { .entry__back { display: none; } }
+
+/* the one place in the machine that is the player's own: ruled lines,
+   a yellow margin, their handwriting rather than the city's type */
+.entry {
+  display: grid;
+  gap: var(--s3);
+  padding: var(--s4);
+  border: var(--rule);
+  background: var(--surface);
+}
+
+.entry__bar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2); }
+.entry__status { margin-right: auto; font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.08em; color: var(--text-faint); }
+.entry__status--saved::before { content: "● "; color: var(--olive); }
+.entry__status--dirty::before, .entry__status--saving::before { content: "○ "; }
+.entry__status--error, .entry__status--conflict { color: var(--signal); }
+
+.entry__title {
+  width: 100%;
+  padding: var(--s2) 0;
+  border: 0;
+  border-bottom: var(--rule-strong);
+  background: none;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: var(--text-lg);
+}
+
+.entry__body {
+  width: 100%;
+  min-height: 22rem;
+  padding: 0 0 0 var(--s4);
+  border: 0;
+  border-left: 2px solid var(--tape);
+  background:
+    repeating-linear-gradient(to bottom, transparent 0 calc(1.75rem - 1px), var(--line) calc(1.75rem - 1px) 1.75rem);
+  background-attachment: local;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 0.9375rem;
+  line-height: 1.75rem;
+  resize: vertical;
+}
+
+.entry__title:focus-visible, .entry__body:focus-visible { outline-offset: 4px; }
+.entry__title:disabled, .entry__body:disabled { opacity: 0.5; }
+.entry__count { text-align: right; font-family: var(--font-mono); font-size: 0.625rem; }
+
+.entry__conflict { display: grid; gap: var(--s3); padding: var(--s4); border: 1px solid var(--signal); background: rgb(210 74 54 / 0.06); font-size: var(--text-sm); }
+.entry__versions { display: grid; gap: var(--s3); }
+@media (min-width: 40rem) { .entry__versions { grid-template-columns: 1fr 1fr; } }
+.entry__versions pre { margin: var(--s1) 0 0; max-height: 12rem; overflow: auto; padding: var(--s3); background: #070706; border: var(--rule); font-family: var(--font-mono); font-size: var(--text-xs); white-space: pre-wrap; color: var(--text-dim); }
+.entry__choose { display: flex; flex-wrap: wrap; gap: var(--s2); }
+
+.entry__links { display: grid; gap: var(--s2); padding-top: var(--s3); border-top: var(--rule); }
+.chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--s2); }
+.chip { display: inline-flex; align-items: center; border: var(--rule-strong); font-size: var(--text-xs); }
+.chip a { padding: var(--s1) var(--s2); color: var(--text); text-decoration: none; }
+.chip .mono { color: var(--accent); }
+.chip button { min-width: 2rem; min-height: 2rem; border: 0; border-left: var(--rule); background: none; color: var(--text-faint); cursor: pointer; }
+.chip button:hover { color: var(--signal); }
+.entry__picker { max-width: 24rem; }
+
+/* ---------- personnel file ---------- */
+
+.progress-row { grid-template-columns: 1fr auto; }
+
+.awards { list-style: none; margin: 0; padding: 0; }
+.award { display: grid; grid-template-columns: 1fr auto; gap: 0 var(--s3); padding: var(--s3) var(--s4); border-bottom: var(--rule); color: var(--text-faint); font-size: var(--text-sm); }
+.award:last-child { border-bottom: 0; }
+.award b { font-weight: 500; color: var(--text-dim); }
+.award span { grid-column: 1; }
+.award time { grid-column: 2; grid-row: 1 / span 2; align-self: center; font-family: var(--font-mono); font-size: var(--text-xs); }
+.award--earned b { color: var(--text); }
+.award--earned b::before { content: ""; display: inline-block; width: 0.5rem; height: 0.5rem; margin-right: var(--s2); background: var(--tape); vertical-align: 0.1em; }
+
+/* ---------- admin ---------- */
+
+.tabs { display: flex; flex-wrap: wrap; gap: var(--s1); margin: calc(-1 * var(--s4)) 0 var(--s5); border-bottom: var(--rule); }
+.tabs__link { padding: var(--s2) var(--s3); color: var(--text-dim); font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: var(--track-caps); text-transform: uppercase; text-decoration: none; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.tabs__link[aria-current="page"] { color: var(--text); border-bottom-color: var(--accent); }
+
+.admin__campaign { padding: var(--s3) var(--s4); border-bottom: var(--rule); }
+.admin__campaign .log { margin-top: var(--s2); border: var(--rule); }
+
+.diag { list-style: none; margin: 0; padding: 0; }
+.diag__row { display: grid; gap: var(--s1); padding: var(--s3) var(--s4); border-bottom: var(--rule); font-size: var(--text-sm); }
+.diag__nums { font-size: var(--text-xs); color: var(--text-dim); }
+.diag__wrong { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--s1) var(--s3); font-size: var(--text-xs); color: var(--text-faint); }
+.diag__wrong code { color: var(--signal); }

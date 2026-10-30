@@ -15,6 +15,9 @@ export function Shell() {
   const links = [
     { to: '/hub', label: 'Network' },
     { to: '/campaigns', label: 'Campaigns' },
+    { to: '/archive', label: 'Archive' },
+    { to: '/notebook', label: 'Notebook' },
+    { to: '/profile', label: 'File' },
     ...(me?.profile?.role === 'admin' ? [{ to: '/admin', label: 'Admin' }] : []),
   ];
 

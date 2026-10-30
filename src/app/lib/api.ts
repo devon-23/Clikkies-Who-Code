@@ -2,13 +2,18 @@ import type { ApiErrorBody, ApiErrorCode } from '../../shared/api.ts';
 import { supabase } from './supabase.ts';
 
 export class ApiClientError extends Error {
-  constructor(
-    public readonly status: number,
-    public readonly code: ApiErrorCode | 'network',
-    message: string,
-    public readonly requestId?: string,
-  ) {
+  readonly status: number;
+  readonly code: ApiErrorCode | 'network';
+  readonly requestId?: string;
+  /** the rest of the error body -- e.g. `current` on a save conflict */
+  readonly body: Record<string, unknown>;
+
+  constructor(status: number, code: ApiErrorCode | 'network', message: string, requestId?: string, body: Record<string, unknown> = {}) {
     super(message);
+    this.status = status;
+    this.code = code;
+    this.requestId = requestId;
+    this.body = body;
   }
 }
 
@@ -36,7 +41,7 @@ export async function api<T>(path: string, init: { method?: string; body?: unkno
   const data: unknown = await res.json().catch(() => null);
   if (!res.ok) {
     const err = (data as ApiErrorBody | null)?.error;
-    throw new ApiClientError(res.status, err?.code ?? 'internal', err?.message ?? 'Something went wrong.', err?.requestId);
+    throw new ApiClientError(res.status, err?.code ?? 'internal', err?.message ?? 'Something went wrong.', err?.requestId, (data ?? {}) as Record<string, unknown>);
   }
   return data as T;
 }

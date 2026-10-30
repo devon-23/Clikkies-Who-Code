@@ -32,6 +32,12 @@ describe.skipIf(!built)('production client bundle', () => {
     expect(text).not.toContain('/dev/preview');
   });
 
+  it('contains no story content or server code', () => {
+    // field names that only exist in the server-side content schema
+    expect(text).not.toMatch(/nearMisses|startingEvidence|hiddenCodes|fallbackEvidence/);
+    expect(text).not.toContain('CANARY-');
+  });
+
   it('contains no server-side secrets', () => {
     expect(text).not.toMatch(/DATABASE_URL/);
     expect(text).not.toMatch(/postgres(ql)?:\/\//);

@@ -42,6 +42,8 @@ describe('signup gate', () => {
 
 describe('row-level security', () => {
   const TABLES = ['app_settings', 'profiles', 'tester_access', 'admin_audit_log', 'error_events'];
+  const allTables = async () => (await h.sql<{ relname: string }>(
+    `select relname from pg_class where relnamespace = 'public'::regnamespace and relkind = 'r'`)).map((r) => r.relname);
 
   it('is switched on for every table', async () => {
     const rows = await h.sql<{ relname: string; relrowsecurity: boolean }>(
@@ -53,8 +55,10 @@ describe('row-level security', () => {
   });
 
   it('gives the browser roles no access to any table', async () => {
+    const tables = await allTables();
+    expect(tables.length).toBeGreaterThan(TABLES.length);
     for (const role of ['anon', 'authenticated']) {
-      for (const t of TABLES) {
+      for (const t of tables) {
         const [row] = await h.sql<{ ok: boolean }>(
           `select has_table_privilege($1, $2, 'select') or has_table_privilege($1, $2, 'insert')
                or has_table_privilege($1, $2, 'update') or has_table_privilege($1, $2, 'delete') as ok`,

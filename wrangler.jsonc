@@ -31,7 +31,9 @@
       },
       "hyperdrive": [
         { "binding": "HYPERDRIVE", "id": "REPLACE_WITH_STAGING_HYPERDRIVE_ID" }
-      ]
+      ],
+      // nightly housekeeping: see scheduled() in src/worker/index.ts
+      "triggers": { "crons": ["23 4 * * *"] }
     },
     "production": {
       "name": "clikkies-who-code",
@@ -41,7 +43,9 @@
       },
       "hyperdrive": [
         { "binding": "HYPERDRIVE", "id": "REPLACE_WITH_PRODUCTION_HYPERDRIVE_ID" }
-      ]
+      ],
+      // nightly housekeeping: see scheduled() in src/worker/index.ts
+      "triggers": { "crons": ["23 4 * * *"] }
     }
   }
 }

@@ -213,4 +213,6 @@ button, input, textarea, select { font: inherit; color: inherit; }
   border-radius: 1px;
   padding: 0 0.15em;
   user-select: none;
+  /* a long bar must be able to wrap like text */
+  word-break: break-all;
 }

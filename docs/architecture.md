@@ -60,24 +60,79 @@ start unnamed and later inherit *Clancy*. The interface says so where the
 handle is chosen and where it is shown. Story identity will live with the run
 (Milestone 3), not the account.
 
-## Data model (so far)
+## Story content and the engine
+
+Authored content lives in `content/story/` (missions, evidence, achievements,
+hidden codes) and is **server-only**: it is compiled into the Worker and the
+browser gets one unlocked piece at a time through the API. Answers and
+unreleased story are never in the browser bundle. A test fails if `src/app`
+imports `content/story`, and another scans the built bundle. The five
+campaign cards (`content/campaigns.ts`) are the one public exception.
+
+`src/worker/content/registry.ts` validates everything when the Worker starts
+(and in `npm run content:check`): missing references, duplicate ids or file
+numbers, prerequisite loops, hints out of order.
+
+What is open is **never stored**. It is worked out from what the current
+cycle has completed, every time (`src/worker/services/progress.ts`):
+
+- Campaign 1 is open; campaign *n* opens when campaign *n − 1* is closed.
+- A campaign is closed when it has missions and every non-optional one is
+  completed this cycle. An empty campaign is never closed, so an unbuilt one
+  cannot be skipped through.
+- A mission opens when its campaign is open and its prerequisites are done.
+
+Only the server decides an answer is right. Saved working state
+(`mission_progress.state`) is the interface's scratch space and can never
+complete a mission. Answer submission is rate-limited (20 per mission, 100
+overall, per 10 minutes).
+
+## Two lifetimes
+
+| Per **cycle** (run) | Per **account**, forever |
+|---|---|
+| which missions are open / in progress / closed | evidence discovered |
+| hints revealed | achievements |
+| saved mission working state | notebook entries |
+
+A new cycle (`POST /api/runs`, only once Breach is closed) marks the run
+complete and opens the next. History stays in `runs` and
+`mission_completions`.
+
+## Data model
 
 | Table | Holds |
 |---|---|
 | `profiles` | handle, role, when the intro was seen. 1:1 with `auth.users` |
-| `tester_access` | invitation list, keyed by email (the invite exists before the account); `user_id` linked at intake |
-| `app_settings` | runtime switches — currently `public_registration` |
+| `tester_access` | invitation list, keyed by email; `user_id` linked at intake |
+| `app_settings` | runtime switches: `public_registration` |
 | `admin_audit_log` | every privileged change: who, what, when |
-| `error_events` | thin technical error records: route, message, request id. Never bodies, tokens or player writing |
+| `error_events` | thin technical error records. Deleted after 90 days |
+| `runs` | one per cycle; at most one active per player |
+| `mission_progress` | per run × mission: in progress / completed, working state, version |
+| `mission_completions` | every completion ever, replays included. Append-only |
+| `hint_usage` | per run × mission × level |
+| `answer_attempts` | rate limiting + diagnostics. Only wrong answers keep text (normalised, ≤64 chars), wiped after 30 days |
+| `evidence_discoveries` | per account × record, with where it came from |
+| `player_achievements` | per account × achievement |
+| `notebook_entries` + `notebook_entry_evidence` | the player's notes and links to records they have found |
 
-Story progress, evidence, notebook, achievements, runs and Training Grounds
-tables arrive in Milestone 3. Authored content (campaigns, missions, evidence
-definitions) stays in `content/`, version-controlled; only player state goes in
-the database.
+Content ids in these tables are plain text, not foreign keys, because the
+content lives in git. The admin **Diagnostics → Content drift** panel lists
+rows that point at ids no longer in content.
 
 `src/worker/db/schema.ts` mirrors the SQL for typed queries. **The SQL
-migrations are the source of truth**: change a migration, then change the
-mirror.
+migrations are the source of truth**: change a migration, then the mirror.
+
+## Saving and conflicts
+
+Notebook entries and mission working state carry a `version`. A save names
+the version it was based on. If another device saved since, the server
+refuses with 409 and returns the newer copy, and nothing is overwritten. The
+notebook then shows both versions and lets the player choose.
+`src/app/lib/useAutosave.ts` debounces saves, only says "Saved" once the
+server confirms, retries on failure, and warns before closing a tab with
+unsaved work.
 
 ## Visual system
 
@@ -116,12 +171,17 @@ archive's `cityMarkDrawn` — not traced from official artwork.
 | Password reset replies identically for any address | the form cannot be used to test which emails have accounts |
 | Supabase secret key is never used | nothing in this design needs it, so nothing can leak it |
 
+## Retention
+
+A nightly cron (`scheduled()` in `src/worker/index.ts`, deployed environments
+only) blanks the text of wrong answers older than 30 days and deletes error
+records older than 90. Counts stay; what people typed does not.
+
 ## Known limitations (current milestone)
 
-- No rate limiting on API routes yet. Admin routes need an admin session, and
-  sign-up/sign-in are rate-limited by Supabase. Answer submission (Milestone 4)
-  will get its own limiter.
-- `error_events` has no retention job yet. Planned with the admin diagnostics
-  work.
+- Only answer submission and the archive terminal are rate-limited. Other
+  routes need a signed-in, authorized player; sign-up and sign-in are
+  rate-limited by Supabase.
 - No end-to-end browser tests yet. They need a real Supabase project (or a
-  local Auth server) to sign in against.
+  local Auth server) to sign in against. The dev preview (`/dev/preview`) is
+  for design and manual checks, not a substitute.

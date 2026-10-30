@@ -3,6 +3,7 @@ import type { AdminOverview, Tester } from '../../shared/api.ts';
 import { demaDate } from '../../shared/dema.ts';
 import { LinkFailed, Linking } from '../components/States.tsx';
 import { api, errorMessage } from '../lib/api.ts';
+import { AdminTabs } from './AdminViews.tsx';
 
 // Operational controls only. Mission content is edited in the repository,
 // not here. Every action below is checked again by the API.
@@ -56,6 +57,7 @@ export function Admin() {
         <p className="kicker">Administration · restricted</p>
         <h1 className="page-head__title">Registry office</h1>
       </header>
+      <AdminTabs />
 
       {notice && <p className={`alert${notice.ok ? ' alert--ok' : ''} admin__notice`} role={notice.ok ? 'status' : 'alert'}>{notice.text}</p>}
 

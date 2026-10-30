@@ -14,14 +14,28 @@ import './styles/base.css';
 import './styles/document.css';
 import './styles/system.css';
 import './styles/pages.css';
+import './styles/investigation.css';
 
+import type { ComponentType, ReactNode } from 'react';
 import { SessionProvider } from './auth/session.tsx';
-import { router } from './router.tsx';
+
+// Development only: /dev/preview switches the app to a fake session and a
+// fake API, for design work without Supabase. import.meta.env.DEV is `false`
+// in production builds, so this branch and the module it loads never ship.
+let Provider: ComponentType<{ children: ReactNode }> = SessionProvider;
+if (import.meta.env.DEV) {
+  const preview = await import('./dev/Preview.tsx');
+  Provider = preview.activate() ?? SessionProvider;
+}
+
+// loaded after the preview may have rewritten the URL: the router reads the
+// location once, when it is created
+const { router } = await import('./router.tsx');
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <SessionProvider>
+    <Provider>
       <RouterProvider router={router} />
-    </SessionProvider>
+    </Provider>
   </StrictMode>,
 );
